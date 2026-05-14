@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../../context/StoreContext'
 import { formatPrice } from '../../utils/shopHelpers'
+import add from '../../../public/add.png'
 
 const BLANK_PRODUCT = {
   id: '',
@@ -261,14 +262,14 @@ function AdminProductsPage() {
         <div className="admin-products-head-actions">
           <button
             type="button"
-            className="admin-primary-btn"
+            className="admin-product-add"
             onClick={() => {
               setEditor(BLANK_PRODUCT)
               setFormNotice('')
               setShowForm(true)
             }}
           >
-            <i class="fa-solid fa-plus"></i>
+           <img width={30} src={add} alt="Add" />
           </button>
         </div>
 
