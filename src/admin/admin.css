@@ -22,6 +22,23 @@ select {
   outline: none;
 }
 
+/* Hide scrollbar for Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for IE & old Edge */
+* {
+  -ms-overflow-style: none;
+}
+
 .admin-auth-shell,
 .admin-shell {
   min-height: 100vh;
@@ -370,9 +387,10 @@ select {
 .admin-product-list {
   display: grid;
   grid-template-columns: 1fr; /* Default = 1 card */
-  gap: 12px;
+  gap: 5px;
   overflow-y: auto;
   border: none;
+  padding: 5px;
 }
 
 /* Card */
@@ -805,7 +823,6 @@ select {
 
 .admin-product-form input {
   width: 100%;
-  border: none;
   outline: none;
   background: #f5f7fb;
   padding: 14px;

@@ -87,7 +87,7 @@ function AdminPanelLayout({ onAdminLogout }) {
               >
                 <i className="fa-solid fa-bars" />
               </button>
-              <h2>{activeSection?.label || 'Overview'}</h2>
+              <img width={150} src={logo} alt="" />
             </div>
           </header>
 
