@@ -269,7 +269,7 @@ function AdminProductsPage() {
               setShowForm(true)
             }}
           >
-           <img width={30} src={add} alt="Add" />
+           <img width={40} src={add} alt="Add" />
           </button>
         </div>
 
