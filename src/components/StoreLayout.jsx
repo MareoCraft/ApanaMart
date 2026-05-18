@@ -1,9 +1,5 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { SHOP_INFO } from '../shopData'
 import { useStore } from '../context/StoreContext'
-import { formatPrice } from '../utils/shopHelpers'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoffee, faUser } from "@fortawesome/free-solid-svg-icons";
 import img from "/ApanaMartLogo2.png"
 import home from "/home.png"
 import card from "/shopping-basket.png"
@@ -96,11 +92,11 @@ function StoreLayout({ session, onLogout }) {
             <img src={order} alt="Cart" />
 
             {cartStats.itemCount > 0 && (
-              <span className="cart-badge">
+              <p className="cart-badge">
                 {cartStats.itemCount > 9
                   ? "9+"
                   : cartStats.itemCount}
-              </span>
+              </p>
             )}
           </div>
 

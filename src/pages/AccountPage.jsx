@@ -1,11 +1,14 @@
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from '../context/StoreContext'
 
 function AccountPage({ session, onLogout }) {
   const navigate = useNavigate()
   const { profile, setProfile, saveAccount } = useStore()
   const [isSaving, setIsSaving] = useState(false)
+  const [installPromptEvent, setInstallPromptEvent] = useState(null)
+  const [installMessage, setInstallMessage] = useState('')
+  const [isInstalled, setIsInstalled] = useState(false)
   const safeSession = session || {}
 
   const effectiveProfile = {
@@ -23,6 +26,62 @@ function AccountPage({ session, onLogout }) {
     setIsSaving(true)
     await saveAccount()
     setIsSaving(false)
+  }
+
+  useEffect(() => {
+    const checkInstalled = () => {
+      const isStandalone =
+        window.matchMedia?.('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true
+      setIsInstalled(Boolean(isStandalone))
+      if (isStandalone) {
+        setInstallMessage('App is already installed.')
+      }
+    }
+
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault()
+      setInstallPromptEvent(event)
+      setInstallMessage('Install app for quick access from your home screen.')
+    }
+
+    const handleAppInstalled = () => {
+      setIsInstalled(true)
+      setInstallPromptEvent(null)
+      setInstallMessage('App installed successfully.')
+    }
+
+    checkInstalled()
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (isInstalled) {
+      setInstallMessage('App is already installed.')
+      return
+    }
+
+    if (!installPromptEvent) {
+      setInstallMessage('Install is not available yet on this browser/device.')
+      return
+    }
+
+    installPromptEvent.prompt()
+    const choiceResult = await installPromptEvent.userChoice
+
+    if (choiceResult?.outcome === 'accepted') {
+      setInstallMessage('Installing app...')
+    } else {
+      setInstallMessage('Install cancelled.')
+    }
+
+    setInstallPromptEvent(null)
   }
 
   return (
@@ -93,6 +152,15 @@ function AccountPage({ session, onLogout }) {
           <button type="submit" className="save-btn account-update-btn" disabled={isSaving}>
             {isSaving ? 'Updating...' : 'Update Details'}
           </button>
+          <button
+            type="button"
+            className="account-install-btn"
+            onClick={handleInstallClick}
+            disabled={isInstalled}
+          >
+            {isInstalled ? 'App Installed' : 'Install App'}
+          </button>
+          {installMessage && <p className="account-install-note">{installMessage}</p>}
           <button
             type="button"
             className="account-logout-btn"

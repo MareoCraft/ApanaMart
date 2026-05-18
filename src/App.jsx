@@ -14,6 +14,7 @@ import './App.css'
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const SignupPage = lazy(() => import('./pages/SignupPage'))
 const ShopPage = lazy(() => import('./pages/ShopPage'))
+const CategoryProductsPage = lazy(() => import('./pages/CategoryProductsPage'))
 const OrdersPage = lazy(() => import('./pages/OrdersPage'))
 const AccountPage = lazy(() => import('./pages/AccountPage'))
 const CartPage = lazy(() => import('./pages/CartPage'))
@@ -154,6 +155,7 @@ function AppRoutes() {
         >
           <Route index element={<Navigate to="/shop" />} />
           <Route path="shop" element={<ShopPage />} />
+          <Route path="products/:categoryName" element={<CategoryProductsPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
