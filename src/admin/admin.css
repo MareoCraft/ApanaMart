@@ -243,6 +243,11 @@ select {
 
 .admin-main {
   min-width: 0;
+  position: relative;
+}
+
+.admin-route-content {
+  border-radius: 14px;
 }
 
 .admin-topbar {
@@ -914,7 +919,7 @@ select {
   border: none;
   border-radius: 50px;
   position: fixed;
-  bottom: 50px;
+  bottom: 100px;
   right: 20px;
   cursor: pointer;
   background-color: rgb(3, 40, 12);

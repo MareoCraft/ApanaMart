@@ -109,7 +109,7 @@ function ShopPage() {
                         navigate(`/products/${encodeURIComponent(category)}`)
                       }}
                     >
-                      View All Products
+                      View All
                     </button>
 
                   </div>

@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { ADMIN_SECTIONS } from './adminConfig'
+import { useStore } from '../context/StoreContext'
+import RouteDataLoadingSkeleton from '../components/RouteDataLoadingSkeleton'
 import './admin.css'
 import logo from '../../public/ApanaMartLogo2.png'
 
 function AdminPanelLayout({ onAdminLogout }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { isProductsLoading, isOrdersLoading } = useStore()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const isDataLoading = isProductsLoading || isOrdersLoading
 
   const activeSection =
     ADMIN_SECTIONS.find((section) => location.pathname.includes(`/${section.id}`)) ||
@@ -108,7 +112,10 @@ function AdminPanelLayout({ onAdminLogout }) {
             </div>
           </header>
 
-          <Outlet />
+          <div key={location.pathname} className="route-content admin-route-content">
+            <Outlet />
+            {isDataLoading ? <RouteDataLoadingSkeleton mode="admin" /> : null}
+          </div>
         </main>
       </div>
     </section>

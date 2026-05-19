@@ -27,13 +27,13 @@ function CategoryProductsPage() {
   return (
     <section className="category-products-page">
       <div className="category-products-head">
-        <button
+        {/* <button
           type="button"
           className="category-back-btn"
           onClick={() => navigate('/shop')}
         >
           <i className="fa-solid fa-arrow-left"></i>
-        </button>
+        </button> */}
         <div className="category-head">
           <h2>{decodedCategory || 'Products'}</h2>
           <p>{categoryProducts.length} products</p>

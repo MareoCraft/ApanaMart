@@ -80,13 +80,24 @@ function AccountPage({ session, onLogout }) {
         window.location.hostname === 'localhost' ||
         window.location.hostname === '127.0.0.1'
       const hasServiceWorker = 'serviceWorker' in navigator
+      const isIos =
+        /iphone|ipad|ipod/i.test(window.navigator.userAgent || '') &&
+        !window.matchMedia?.('(display-mode: standalone)').matches
 
       if (!isSecureOrigin) {
         setInstallMessage('Install works only on HTTPS. Open this site with https:// and try again.')
+      } else if (isIos) {
+        setInstallMessage('On iPhone/iPad, use Share -> Add to Home Screen to install.')
       } else if (!hasServiceWorker) {
         setInstallMessage('This browser does not support app installation.')
       } else {
-        setInstallMessage('Install option is not ready yet. Wait a moment, refresh, and try again.')
+        const registration = await navigator.serviceWorker.getRegistration()
+
+        if (!registration) {
+          setInstallMessage('Preparing app install support. Refresh once and try again in a few seconds.')
+        } else {
+          setInstallMessage('Try Chrome/Edge or open browser menu -> Add to Homescreen app.')
+        }
       }
       return
     }
@@ -195,8 +206,13 @@ function AccountPage({ session, onLogout }) {
             disabled={isSaving || isInstalling || isLoggingOut}
           >
             {isSaving ? 'Updating...' : 'Update Details'}
-          </button>
-          <button
+          </button>          
+          {installMessage && <p className="account-install-note">{installMessage}</p>}
+        </div>
+      </form>
+
+      <div style={{display:'flex', gap: 30, margin: "0 15px"}}>
+        <button
             type="button"
             className="account-install-btn"
             onClick={handleInstallClick}
@@ -204,7 +220,6 @@ function AccountPage({ session, onLogout }) {
           >
             {isInstalled ? 'App Installed' : isInstalling ? 'Installing...' : 'Install App'}
           </button>
-          {installMessage && <p className="account-install-note">{installMessage}</p>}
           <button
             type="button"
             className="account-logout-btn"
@@ -213,8 +228,7 @@ function AccountPage({ session, onLogout }) {
           >
             {isLoggingOut ? 'Logging out...' : 'Logout'}
           </button>
-        </div>
-      </form>
+      </div>
     </section>
   )
 }

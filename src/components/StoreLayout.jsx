@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import RouteDataLoadingSkeleton from './RouteDataLoadingSkeleton'
 import img from "/ApanaMartLogo2.png"
 import home from "/home.png"
 import card from "/shopping-basket.png"
@@ -7,9 +8,10 @@ import order from "/shopping-cart.png"
 import profile from "/profile.png"
 
 function StoreLayout({ session, onLogout }) {
-  const { cartStats, notice } = useStore()
+  const { cartStats, notice, isProductsLoading, isOrdersLoading } = useStore()
   const navigate = useNavigate()
   const location = useLocation()
+  const isDataLoading = isProductsLoading || isOrdersLoading
 
   return (
     <div className="app-shell">
@@ -43,6 +45,7 @@ function StoreLayout({ session, onLogout }) {
       <main className="content-area">
         <div key={location.pathname} className="route-content">
           <Outlet />
+          {isDataLoading ? <RouteDataLoadingSkeleton /> : null}
         </div>
       </main>
 
