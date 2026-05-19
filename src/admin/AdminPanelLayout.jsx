@@ -8,6 +8,7 @@ function AdminPanelLayout({ onAdminLogout }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const activeSection =
     ADMIN_SECTIONS.find((section) => location.pathname.includes(`/${section.id}`)) ||
@@ -28,6 +29,17 @@ function AdminPanelLayout({ onAdminLogout }) {
       document.body.style.overflow = ''
     }
   }, [isMenuOpen])
+
+  const handleAdminLogout = async () => {
+    if (isLoggingOut) return
+
+    setIsLoggingOut(true)
+    try {
+      await Promise.resolve(onAdminLogout?.())
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <section className="admin-shell">
@@ -70,8 +82,13 @@ function AdminPanelLayout({ onAdminLogout }) {
             <button type="button" className="admin-ghost-btn" onClick={() => navigate('/shop')}>
               Open Storefront
             </button>
-            <button type="button" className="admin-add-btn" onClick={onAdminLogout}>
-              Logout
+            <button
+              type="button"
+              className="admin-add-btn"
+              onClick={handleAdminLogout}
+              disabled={isLoggingOut}
+            >
+              {isLoggingOut ? 'Logging out...' : 'Logout'}
             </button>
           </div>
         </aside>

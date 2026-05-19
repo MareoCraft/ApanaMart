@@ -826,6 +826,12 @@ p {
   color: #264f3b;
 }
 
+.account-logout-btn:disabled,
+.account-update-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
 .account-install-btn {
   width: 100%;
   border: 1px solid #0f6f35;

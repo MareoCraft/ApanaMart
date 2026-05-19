@@ -30,6 +30,7 @@ function SignupPage({ onSignupSuccess }) {
   const [otpStatus, setOtpStatus] = useState('')
   const [verifiedPhone, setVerifiedPhone] = useState('')
   const [isOtpLoading, setIsOtpLoading] = useState(false)
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false)
 
   const handleFormChange = (key, value) => {
     if (key === 'phone') {
@@ -69,6 +70,8 @@ function SignupPage({ onSignupSuccess }) {
   }
 
   const startOtpVerification = async () => {
+    if (isCreatingAccount) return
+
     const validation = validateForm()
     if (!validation.ok) {
       setError(validation.message)
@@ -183,6 +186,8 @@ function SignupPage({ onSignupSuccess }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    if (isCreatingAccount) return
+
     const validation = validateForm()
     if (!validation.ok) {
       setError(validation.message)
@@ -205,58 +210,63 @@ function SignupPage({ onSignupSuccess }) {
       return
     }
 
+    setIsCreatingAccount(true)
     try {
-      if (firestoreDb) {
-        const userRef = doc(
-          firestoreDb,
-          authConfig.usersCollection,
-          validation.phone,
-        )
-        const existingRemoteUser = await getDoc(userRef)
+      try {
+        if (firestoreDb) {
+          const userRef = doc(
+            firestoreDb,
+            authConfig.usersCollection,
+            validation.phone,
+          )
+          const existingRemoteUser = await getDoc(userRef)
 
-        if (existingRemoteUser.exists()) {
-          setError('Account already exists with this mobile number.')
-          setSuccess('')
-          return
+          if (existingRemoteUser.exists()) {
+            setError('Account already exists with this mobile number.')
+            setSuccess('')
+            return
+          }
+
+          await setDoc(userRef, {
+            name: validation.name,
+            phone: validation.phone,
+            address: validation.address,
+            password: form.password,
+            createdAt: Date.now(),
+            createdAtServer: serverTimestamp(),
+          })
         }
-
-        await setDoc(userRef, {
-          name: validation.name,
-          phone: validation.phone,
-          address: validation.address,
-          password: form.password,
-          createdAt: Date.now(),
-          createdAtServer: serverTimestamp(),
-        })
+      } catch (dbError) {
+        setError(dbError.message || 'Failed to save account in database.')
+        setSuccess('')
+        return
       }
-    } catch (dbError) {
-      setError(dbError.message || 'Failed to save account in database.')
-      setSuccess('')
-      return
+
+      const newUser = {
+        name: validation.name,
+        phone: validation.phone,
+        address: validation.address,
+        password: form.password,
+        createdAt: Date.now(),
+      }
+
+      writeStorage(STORAGE_KEYS.users, [...users, newUser])
+
+      setError('')
+      setOtpStatus('')
+      setSuccess('Account created successfully. Redirecting...')
+
+      const nextSession = {
+        name: validation.name,
+        phone: validation.phone,
+        address: validation.address,
+      }
+
+      onSignupSuccess?.(nextSession)
+      navigate('/shop')
+    } finally {
+      setIsCreatingAccount(false)
     }
-
-    const newUser = {
-      name: validation.name,
-      phone: validation.phone,
-      address: validation.address,
-      password: form.password,
-      createdAt: Date.now(),
-    }
-
-    writeStorage(STORAGE_KEYS.users, [...users, newUser])
-
-    setError('')
-    setOtpStatus('')
-    setSuccess('Account created successfully. Redirecting...')
-
-    const nextSession = {
-      name: validation.name,
-      phone: validation.phone,
-      address: validation.address,
-    }
-
-    onSignupSuccess?.(nextSession)
-    navigate('/shop')
   }
 
   return (
@@ -321,7 +331,7 @@ function SignupPage({ onSignupSuccess }) {
           type="button"
           className="auth-btn auth-btn-secondary"
           onClick={startOtpVerification}
-          disabled={isOtpLoading}
+          disabled={isOtpLoading || isCreatingAccount}
         >
           {isOtpLoading ? 'Verifying OTP...' : 'Verify OTP'}
         </button>
@@ -330,8 +340,8 @@ function SignupPage({ onSignupSuccess }) {
         {error && <p className="auth-error">{error}</p>}
         {success && <p className="auth-success">{success}</p>}
 
-        <button type="submit" className="auth-btn">
-          Create Account
+        <button type="submit" className="auth-btn" disabled={isCreatingAccount || isOtpLoading}>
+          {isCreatingAccount ? 'Creating Account...' : 'Create Account'}
         </button>
       </form>
     </AuthCard>
@@ -339,4 +349,3 @@ function SignupPage({ onSignupSuccess }) {
 }
 
 export default SignupPage
-

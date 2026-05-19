@@ -21,22 +21,30 @@ function AdminLoginPage({ onAdminLogin }) {
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
+    if (isSubmitting) return
 
     if (!isAdminPhone(phone) || password !== ADMIN_CREDENTIALS.password) {
       setError('Invalid admin phone or password.')
       return
     }
 
+    setIsSubmitting(true)
+
     const adminSession = {
       phone: ADMIN_CREDENTIALS.phone,
       loggedAt: Date.now(),
     }
 
-    onAdminLogin(adminSession)
-    navigate('/admin/panel/overview')
+    try {
+      await Promise.resolve(onAdminLogin?.(adminSession))
+      navigate('/admin/panel/overview')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -66,8 +74,8 @@ function AdminLoginPage({ onAdminLogin }) {
 
           {error && <p className="admin-error">{error}</p>}
 
-          <button type="submit" className="admin-add-btn">
-            Open Dashboard
+          <button type="submit" className="admin-add-btn" disabled={isSubmitting}>
+            {isSubmitting ? 'Opening...' : 'Open Dashboard'}
           </button>
         </form>
       </div>
@@ -76,6 +84,5 @@ function AdminLoginPage({ onAdminLogin }) {
 }
 
 export default AdminLoginPage
-
 
 

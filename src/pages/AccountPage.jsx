@@ -6,6 +6,8 @@ function AccountPage({ session, onLogout }) {
   const navigate = useNavigate()
   const { profile, setProfile, saveAccount } = useStore()
   const [isSaving, setIsSaving] = useState(false)
+  const [isInstalling, setIsInstalling] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [installPromptEvent, setInstallPromptEvent] = useState(null)
   const [installMessage, setInstallMessage] = useState('')
   const [isInstalled, setIsInstalled] = useState(false)
@@ -24,8 +26,11 @@ function AccountPage({ session, onLogout }) {
     if (isSaving) return
 
     setIsSaving(true)
-    await saveAccount()
-    setIsSaving(false)
+    try {
+      await saveAccount()
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   useEffect(() => {
@@ -62,26 +67,61 @@ function AccountPage({ session, onLogout }) {
   }, [])
 
   const handleInstallClick = async () => {
+    if (isInstalling) return
+
     if (isInstalled) {
       setInstallMessage('App is already installed.')
       return
     }
 
     if (!installPromptEvent) {
-      setInstallMessage('Install is not available yet on this browser/device.')
+      const isSecureOrigin =
+        window.isSecureContext ||
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1'
+      const hasServiceWorker = 'serviceWorker' in navigator
+
+      if (!isSecureOrigin) {
+        setInstallMessage('Install works only on HTTPS. Open this site with https:// and try again.')
+      } else if (!hasServiceWorker) {
+        setInstallMessage('This browser does not support app installation.')
+      } else {
+        setInstallMessage('Install option is not ready yet. Wait a moment, refresh, and try again.')
+      }
       return
     }
 
-    installPromptEvent.prompt()
-    const choiceResult = await installPromptEvent.userChoice
+    setIsInstalling(true)
 
-    if (choiceResult?.outcome === 'accepted') {
-      setInstallMessage('Installing app...')
-    } else {
-      setInstallMessage('Install cancelled.')
+    try {
+      installPromptEvent.prompt()
+      const choiceResult = await installPromptEvent.userChoice
+
+      if (choiceResult?.outcome === 'accepted') {
+        setInstallMessage('Installing app...')
+      } else {
+        setInstallMessage('Install cancelled.')
+      }
+
+      setInstallPromptEvent(null)
+    } finally {
+      setIsInstalling(false)
     }
+  }
 
-    setInstallPromptEvent(null)
+  const handleLogoutClick = async () => {
+    if (isLoggingOut) return
+
+    setIsLoggingOut(true)
+    try {
+      if (onLogout) {
+        await Promise.resolve(onLogout())
+        return
+      }
+      navigate('/login', { replace: true })
+    } finally {
+      setIsLoggingOut(false)
+    }
   }
 
   return (
@@ -149,30 +189,29 @@ function AccountPage({ session, onLogout }) {
         ></textarea>
 
         <div className="account-actions-bottom">
-          <button type="submit" className="save-btn account-update-btn" disabled={isSaving}>
+          <button
+            type="submit"
+            className="save-btn account-update-btn"
+            disabled={isSaving || isInstalling || isLoggingOut}
+          >
             {isSaving ? 'Updating...' : 'Update Details'}
           </button>
           <button
             type="button"
             className="account-install-btn"
             onClick={handleInstallClick}
-            disabled={isInstalled}
+            disabled={isInstalled || isInstalling || isSaving || isLoggingOut}
           >
-            {isInstalled ? 'App Installed' : 'Install App'}
+            {isInstalled ? 'App Installed' : isInstalling ? 'Installing...' : 'Install App'}
           </button>
           {installMessage && <p className="account-install-note">{installMessage}</p>}
           <button
             type="button"
             className="account-logout-btn"
-            onClick={() => {
-              if (onLogout) {
-                onLogout()
-                return
-              }
-              navigate('/login', { replace: true })
-            }}
+            onClick={handleLogoutClick}
+            disabled={isLoggingOut || isSaving || isInstalling}
           >
-            Logout
+            {isLoggingOut ? 'Logging out...' : 'Logout'}
           </button>
         </div>
       </form>

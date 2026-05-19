@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useStore } from '../../context/StoreContext'
 import { formatPrice } from '../../utils/shopHelpers'
 import add from '../../../public/add.png'
@@ -21,6 +21,26 @@ function AdminProductsPage() {
   const [editor, setEditor] = useState(BLANK_PRODUCT)
   const [formNotice, setFormNotice] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('All')
+
+  const productCategories = useMemo(() => {
+    const categories = products
+      .map((product) => (product.category || '').trim())
+      .filter(Boolean)
+    return ['All', ...Array.from(new Set(categories))]
+  }, [products])
+
+  const filteredProducts = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase()
+    return products.filter((product) => {
+      const inCategory =
+        selectedCategory === 'All' || product.category === selectedCategory
+      const searchableText = `${product.name} ${product.category} ${product.unit}`.toLowerCase()
+      const inSearch = !normalizedQuery || searchableText.includes(normalizedQuery)
+      return inCategory && inSearch
+    })
+  }, [products, searchQuery, selectedCategory])
 
   const handleStartEdit = (product) => {
     setEditor({
@@ -89,28 +109,15 @@ function AdminProductsPage() {
   return (
     <div className="admin-products-layout">
       {showForm && (
-        <div
-          className="admin-panel-overlay"
-          onClick={() => setShowPanel(false)}
-        >
-          <article
-            className="admin-panel-card"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="admin-panel-handle"></div>
+        <div className="admin-panel-overlay" onClick={resetEditor}>
+          <article className="admin-panel-card" onClick={(event) => event.stopPropagation()}>
+            <div className="admin-panel-handle" />
 
             <div className="admin-panel-head">
-              <h3>{editor.id ? "Edit Product" : "Add Product"}</h3>
+              <h3>{editor.id ? 'Edit Product' : 'Add Product'}</h3>
 
-              <button
-                type="button"
-                className="admin-close-btn"
-                onClick={() => {
-                  resetEditor();
-                  setShowPanel(false);
-                }}
-              >
-                ✕
+              <button type="button" className="admin-close-btn" onClick={resetEditor}>
+                X
               </button>
             </div>
 
@@ -118,34 +125,21 @@ function AdminProductsPage() {
               <input
                 placeholder="Product name"
                 value={editor.name}
-                onChange={(event) =>
-                  setEditor((prev) => ({
-                    ...prev,
-                    name: event.target.value,
-                  }))
-                }
+                onChange={(event) => setEditor((prev) => ({ ...prev, name: event.target.value }))}
               />
 
               <input
                 placeholder="Category"
                 value={editor.category}
                 onChange={(event) =>
-                  setEditor((prev) => ({
-                    ...prev,
-                    category: event.target.value,
-                  }))
+                  setEditor((prev) => ({ ...prev, category: event.target.value }))
                 }
               />
 
               <input
                 placeholder="Unit (1 kg, 500 ml)"
                 value={editor.unit}
-                onChange={(event) =>
-                  setEditor((prev) => ({
-                    ...prev,
-                    unit: event.target.value,
-                  }))
-                }
+                onChange={(event) => setEditor((prev) => ({ ...prev, unit: event.target.value }))}
               />
 
               <div className="admin-grid-2">
@@ -154,12 +148,7 @@ function AdminProductsPage() {
                   type="number"
                   min="1"
                   value={editor.price}
-                  onChange={(event) =>
-                    setEditor((prev) => ({
-                      ...prev,
-                      price: event.target.value,
-                    }))
-                  }
+                  onChange={(event) => setEditor((prev) => ({ ...prev, price: event.target.value }))}
                 />
 
                 <input
@@ -168,10 +157,7 @@ function AdminProductsPage() {
                   min="1"
                   value={editor.originalPrice}
                   onChange={(event) =>
-                    setEditor((prev) => ({
-                      ...prev,
-                      originalPrice: event.target.value,
-                    }))
+                    setEditor((prev) => ({ ...prev, originalPrice: event.target.value }))
                   }
                 />
               </div>
@@ -182,12 +168,7 @@ function AdminProductsPage() {
                   type="number"
                   min="0"
                   value={editor.stock}
-                  onChange={(event) =>
-                    setEditor((prev) => ({
-                      ...prev,
-                      stock: event.target.value,
-                    }))
-                  }
+                  onChange={(event) => setEditor((prev) => ({ ...prev, stock: event.target.value }))}
                 />
 
                 <input
@@ -195,71 +176,64 @@ function AdminProductsPage() {
                   type="number"
                   min="1"
                   value={editor.eta}
-                  onChange={(event) =>
-                    setEditor((prev) => ({
-                      ...prev,
-                      eta: event.target.value,
-                    }))
-                  }
+                  onChange={(event) => setEditor((prev) => ({ ...prev, eta: event.target.value }))}
                 />
               </div>
 
               <input
                 placeholder="Category badge"
                 value={editor.badge}
-                onChange={(event) =>
-                  setEditor((prev) => ({
-                    ...prev,
-                    badge: event.target.value,
-                  }))
-                }
+                onChange={(event) => setEditor((prev) => ({ ...prev, badge: event.target.value }))}
               />
 
               <input
                 placeholder="Image URL or Emoji"
                 value={editor.image}
-                onChange={(event) =>
-                  setEditor((prev) => ({
-                    ...prev,
-                    image: event.target.value,
-                  }))
-                }
+                onChange={(event) => setEditor((prev) => ({ ...prev, image: event.target.value }))}
               />
 
-              <label
-                className="admin-upload-label"
-                htmlFor="admin-product-image"
-              >
-                <input
-                id="admin-product-image"
-                type="file"
-                disabled
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-              </label>             
+              <label className="admin-upload-label" htmlFor="admin-product-image">
+                <input id="admin-product-image" type="file" accept="image/*" onChange={handleImageUpload} />
+                <span>Upload image (optional)</span>
+              </label>
 
               <button type="submit" className="admin-add-btn">
-                {editor.id ? "Update Product" : "Add Product"}
+                {editor.id ? 'Update Product' : 'Add Product'}
               </button>
             </form>
 
-            {formNotice && (
-              <p className="admin-form-note">{formNotice}</p>
-            )}
+            {formNotice && <p className="admin-form-note">{formNotice}</p>}
           </article>
         </div>
       )}
 
       <article className="admin-panel-card">
         <div className="admin-panel-head">
-          <div className='admin-panel-head-top'>
+          <div className="admin-panel-head-top">
             <h3>Product Catalog</h3>
-            <span>{products.length} items</span>
+            <span>{filteredProducts.length} items</span>
           </div>
         </div>
 
-        <div className="admin-products-head-actions">
+        <div className="admin-products-head-actions admin-products-filters">
+          <input
+            type="search"
+            className="admin-product-search"
+            placeholder="Search by product, category, or unit"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+          />
+          <select
+            className="admin-product-category-filter"
+            value={selectedCategory}
+            onChange={(event) => setSelectedCategory(event.target.value)}
+          >
+            {productCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
           <button
             type="button"
             className="admin-product-add"
@@ -268,18 +242,19 @@ function AdminProductsPage() {
               setFormNotice('')
               setShowForm(true)
             }}
+            aria-label="Add product"
           >
-           <img width={40} src={add} alt="Add" />
+            <img width={40} src={add} alt="Add" />
           </button>
         </div>
 
         <div className="admin-product-list">
-          {products.length === 0 ? (
+          {filteredProducts.length === 0 ? (
             <p className="admin-empty">
-              No products in database. Add products from the form.
+              No products found for this search/category.
             </p>
           ) : (
-            products.map((product) => {
+            filteredProducts.map((product) => {
               const hasImageFile =
                 product.image?.startsWith('data:image') ||
                 product.image?.startsWith('http://') ||
@@ -303,9 +278,8 @@ function AdminProductsPage() {
                     </div>
 
                     <p>
-                      {product.category} • {product.unit}
+                      {product.category} | {product.unit}
                     </p>
-
 
                     <div className="admin-actions-inline">
                       <button

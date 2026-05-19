@@ -15,6 +15,7 @@ function LoginPage({ onLogin }) {
   const navigate = useNavigate()
   const [form, setForm] = useState({ phone: '', password: '' })
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const findUser = async (phone) => {
     const users = readStorage(STORAGE_KEYS.users, [])
@@ -43,12 +44,16 @@ function LoginPage({ onLogin }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    if (isSubmitting) return
+
     const phone = normalizePhone(form.phone)
 
     if (!phone || !form.password) {
       setError('Enter valid mobile number and password.')
       return
     }
+
+    setIsSubmitting(true)
 
     try {
       const user = await findUser(phone)
@@ -62,6 +67,8 @@ function LoginPage({ onLogin }) {
       navigate('/shop')
     } catch (loginError) {
       setError(loginError.message || 'Login failed. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -101,8 +108,8 @@ function LoginPage({ onLogin }) {
 
         {error && <p className="auth-error">{error}</p>}
 
-        <button type="submit" className="auth-btn">
-          Login
+        <button type="submit" className="auth-btn" disabled={isSubmitting}>
+          {isSubmitting ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </AuthCard>
@@ -110,4 +117,3 @@ function LoginPage({ onLogin }) {
 }
 
 export default LoginPage
-
