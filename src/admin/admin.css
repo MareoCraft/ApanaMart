@@ -170,7 +170,6 @@ select {
 }
 
 .admin-menu {
-  height: 90vh;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(31, 87, 56, 0.17);
   border-radius: 18px;
@@ -323,6 +322,33 @@ select {
   display: grid;
   gap: 8px;
   margin-top: 8px;
+}
+
+.admin-overview-low-stock {
+  grid-column: 1 / -1;
+}
+
+.admin-overview-low-stock-list {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.admin-overview-low-stock-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px dashed #cfe0d3;
+  border-radius: 9px;
+  padding: 8px 10px;
+  color: #355645;
+  background: #f7fbf8;
+}
+
+.admin-overview-low-stock-row strong {
+  color: #b54708;
+  font-size: 0.86rem;
 }
 
 .admin-panel-head {

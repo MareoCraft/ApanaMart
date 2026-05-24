@@ -6,15 +6,22 @@ import { formatPrice } from '../../utils/shopHelpers'
 function AdminOverviewPage() {
   const navigate = useNavigate()
   const { products, orders } = useStore()
+  const lowStockProducts = useMemo(
+    () =>
+      products
+        .filter((product) => product.stock <= 5)
+        .sort((a, b) => a.stock - b.stock),
+    [products],
+  )
 
   const summary = useMemo(() => {
     const deliveredCount = orders.filter((order) => order.status === 'Delivered').length
     const pendingCount = orders.filter((order) => order.status !== 'Delivered').length
     const revenue = orders.reduce((sum, order) => sum + (order.pricing?.total || 0), 0)
-    const lowStock = products.filter((product) => product.stock <= 5).length
+    const lowStock = lowStockProducts.length
 
     return { deliveredCount, pendingCount, revenue, lowStock }
-  }, [orders, products])
+  }, [orders, lowStockProducts])
 
   return (
     <div className="admin-grid admin-grid-overview">
@@ -48,6 +55,24 @@ function AdminOverviewPage() {
             Update Orders
           </button>
         </div>
+      </article>
+
+      <article className="admin-stat-card admin-overview-low-stock">
+        <p>Low Stock Products (5 or less)</p>
+        {lowStockProducts.length === 0 ? (
+          <div className="admin-overview-low-stock-list">
+            <p className="admin-empty">All items have healthy stock.</p>
+          </div>
+        ) : (
+          <div className="admin-overview-low-stock-list">
+            {lowStockProducts.map((product) => (
+              <div key={product.id} className="admin-overview-low-stock-row">
+                <span>{product.name}</span>
+                <strong>{product.stock} left</strong>
+              </div>
+            ))}
+          </div>
+        )}
       </article>
     </div>
   )

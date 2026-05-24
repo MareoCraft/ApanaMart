@@ -122,6 +122,7 @@ function ShopPage() {
                     {categoryProducts.slice(0, 10).map((product) => {
 
                       const quantity = cart[product.id] || 0
+                      const isOutOfStock = product.stock <= 0
 
                       const isFavorite =
                         favorites.includes(product.id)
@@ -178,9 +179,12 @@ function ShopPage() {
                           {/* Body */}
                           <div className="card-body">
 
-                            <p className="badge">
-                              {product.badge}
-                            </p>
+                            <div className="badge-body">
+                              <p className="badge">{product.badge}</p> 
+                              <span className={`stock-meta ${isOutOfStock ? 'stock-meta--out' : ''}`}>
+                                {isOutOfStock ? 'Out of stock' : `${product.stock} in stock`}
+                              </span>
+                            </div>
 
                             <h3>
                               {product.name.length > 15
@@ -216,12 +220,13 @@ function ShopPage() {
 
                             </div>
 
-                            {quantity > 0 ? (
+                            {quantity > 0 && !isOutOfStock ? (
 
                               <div className="qty-box">
 
                                 <button
                                   type="button"
+                                  disabled={quantity >= product.stock}
                                   onClick={() =>
                                     updateQuantity(
                                       product.id,
@@ -253,12 +258,17 @@ function ShopPage() {
                               <button
                                 type="button"
                                 className="add-btn"
+                                disabled={isOutOfStock}
                                 onClick={() =>
                                   addToCart(product.id)
                                 }
                               >
-                                Add&nbsp;&nbsp;
-                                <i className="fa-solid fa-cart-arrow-down"></i>
+                                {isOutOfStock ? 'Out of Stock' : (
+                                  <>
+                                    Add&nbsp;&nbsp;
+                                    <i className="fa-solid fa-cart-arrow-down"></i>
+                                  </>
+                                )}
                               </button>
 
                             )}
@@ -330,4 +340,3 @@ function ShopPage() {
 }
 
 export default ShopPage
-

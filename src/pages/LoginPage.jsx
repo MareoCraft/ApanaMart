@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
 import AuthCard from '../components/AuthCard'
 import { normalizePhone } from '../utils/authHelpers'
@@ -16,6 +16,12 @@ function LoginPage({ onLogin }) {
   const [form, setForm] = useState({ phone: '', password: '' })
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (!error) return undefined
+    const timer = setTimeout(() => setError(''), 3000)
+    return () => clearTimeout(timer)
+  }, [error])
 
   const findUser = async (phone) => {
     const users = readStorage(STORAGE_KEYS.users, [])
@@ -106,7 +112,7 @@ function LoginPage({ onLogin }) {
           }
         />
 
-        {error && <p className="auth-error">{error}</p>}
+        {error && <div className="toast toast--error">{error}</div>}
 
         <button type="submit" className="auth-btn" disabled={isSubmitting}>
           {isSubmitting ? 'Logging in...' : 'Login'}

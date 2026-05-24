@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { ADMIN_CREDENTIALS } from './adminConfig'
-import './admin.css'
+import AuthCard from '../components/AuthCard'
 
 function normalizeDigits(value) {
   return value.replace(/\D/g, '')
@@ -22,6 +22,12 @@ function AdminLoginPage({ onAdminLogin }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (!error) return undefined
+    const timer = setTimeout(() => setError(''), 3000)
+    return () => clearTimeout(timer)
+  }, [error])
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -48,41 +54,41 @@ function AdminLoginPage({ onAdminLogin }) {
   }
 
   return (
-    <section className="admin-auth-shell">
-      <div className="admin-auth-card">
-        <p className="admin-mini">Gaon Control Center</p>
-        <h1>Admin Panel Login</h1>
-        <span>Manage products, orders, and operations in one place.</span>
+    <AuthCard
+      title="Admin Login"
+      subtitle="Manage products, orders, and operations in one place."
+      footer={
+        <p className="auth-footer">
+          Customer login? <NavLink to="/login">Go to Login</NavLink>
+        </p>
+      }
+    >
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <label htmlFor="admin-phone">Phone Number</label>
+        <input
+          id="admin-phone"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
+          placeholder="9699275778"
+        />
 
-        <form className="admin-auth-form" onSubmit={handleSubmit}>
-          <label htmlFor="admin-phone">Phone Number</label>
-          <input
-            id="admin-phone"
-            value={phone}
-            onChange={(event) => setPhone(event.target.value)}
-            placeholder="9699275778"
-          />
+        <label htmlFor="admin-password">Password</label>
+        <input
+          id="admin-password"
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="Enter password"
+        />
 
-          <label htmlFor="admin-password">Password</label>
-          <input
-            id="admin-password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Enter password"
-          />
+        {error && <div className="toast toast--error">{error}</div>}
 
-          {error && <p className="admin-error">{error}</p>}
-
-          <button type="submit" className="admin-add-btn" disabled={isSubmitting}>
-            {isSubmitting ? 'Opening...' : 'Open Dashboard'}
-          </button>
-        </form>
-      </div>
-    </section>
+        <button type="submit" className="auth-btn" disabled={isSubmitting}>
+          {isSubmitting ? 'Opening...' : 'Open Dashboard'}
+        </button>
+      </form>
+    </AuthCard>
   )
 }
 
 export default AdminLoginPage
-
-

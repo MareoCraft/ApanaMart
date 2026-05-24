@@ -59,6 +59,7 @@ function CategoryProductsPage() {
         <div className="product-grid vertical-grid">
           {categoryProducts.map((product) => {
             const quantity = cart[product.id] || 0
+            const isOutOfStock = product.stock <= 0
             const isFavorite = favorites.includes(product.id)
             const discount = Math.max(0, product.originalPrice - product.price)
             const hasImageFile =
@@ -105,20 +106,37 @@ function CategoryProductsPage() {
                     <p className="meta">{product.eta} M</p>
                   </div>
 
-                  {quantity > 0 ? (
+                  <p className={`stock-meta ${isOutOfStock ? 'stock-meta--out' : ''}`}>
+                    {isOutOfStock ? 'Out of stock' : `${product.stock} in stock`}
+                  </p>
+
+                  {quantity > 0 && !isOutOfStock ? (
                     <div className="qty-box">
                       <button type="button" onClick={() => updateQuantity(product.id, quantity - 1)}>
                         -
                       </button>
                       <span>{quantity}</span>
-                      <button type="button" onClick={() => updateQuantity(product.id, quantity + 1)}>
+                      <button
+                        type="button"
+                        disabled={quantity >= product.stock}
+                        onClick={() => updateQuantity(product.id, quantity + 1)}
+                      >
                         +
                       </button>
                     </div>
                   ) : (
-                    <button type="button" className="add-btn" onClick={() => addToCart(product.id)}>
-                      Add&nbsp;&nbsp;
-                      <i className="fa-solid fa-cart-arrow-down"></i>
+                    <button
+                      type="button"
+                      className="add-btn"
+                      disabled={isOutOfStock}
+                      onClick={() => addToCart(product.id)}
+                    >
+                      {isOutOfStock ? 'Out of Stock' : (
+                        <>
+                          Add&nbsp;&nbsp;
+                          <i className="fa-solid fa-cart-arrow-down"></i>
+                        </>
+                      )}
                     </button>
                   )}
                 </div>

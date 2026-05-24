@@ -120,7 +120,7 @@ export function StoreProvider({ children, session, scope = 'customer' }) {
 
   useEffect(() => {
     if (!notice) return undefined
-    const timer = setTimeout(() => setNotice(''), 2800)
+    const timer = setTimeout(() => setNotice(''), 3000)
     return () => clearTimeout(timer)
   }, [notice])
 
@@ -412,11 +412,29 @@ export function StoreProvider({ children, session, scope = 'customer' }) {
       return { ok: false, message: 'Invalid order status.' }
     }
 
+    const existingOrder = allOrders.find((order) => order.id === orderId)
+    if (!existingOrder) {
+      return { ok: false, message: 'Order not found.' }
+    }
+
+    const now = Date.now()
+    const shouldDeductStock = status === 'Delivered' && !existingOrder.stockDeductedAt
+
+    const quantityByProductId = (existingOrder.items || []).reduce((acc, item) => {
+      const productId = item?.id
+      const qty = Number(item?.qty || 0)
+
+      if (!productId || qty <= 0) return acc
+      acc[productId] = (acc[productId] || 0) + qty
+      return acc
+    }, {})
+
     try {
       if (ordersDb) {
         await update(ref(ordersDb, `${DB_PATHS.orders}/${orderId}`), {
           status,
-          updatedAt: Date.now(),
+          updatedAt: now,
+          ...(shouldDeductStock ? { stockDeductedAt: now } : {}),
         })
       } else {
         let updated = false
@@ -424,7 +442,12 @@ export function StoreProvider({ children, session, scope = 'customer' }) {
           prev.map((order) => {
             if (order.id !== orderId) return order
             updated = true
-            return { ...order, status, updatedAt: Date.now() }
+            return {
+              ...order,
+              status,
+              updatedAt: now,
+              ...(shouldDeductStock ? { stockDeductedAt: now } : {}),
+            }
           }),
         )
 
@@ -433,7 +456,39 @@ export function StoreProvider({ children, session, scope = 'customer' }) {
         }
       }
 
-      setNotice(`Order ${orderId} marked as ${status}.`)
+      if (shouldDeductStock && Object.keys(quantityByProductId).length > 0) {
+        if (productsDb) {
+          await Promise.all(
+            Object.entries(quantityByProductId).map(([productId, orderedQty]) => {
+              const product = products.find((entry) => entry.id === productId)
+              if (!product) return Promise.resolve()
+
+              const nextStock = Math.max(0, Number(product.stock || 0) - orderedQty)
+              return update(ref(productsDb, `${DB_PATHS.products}/${productId}`), {
+                stock: nextStock,
+                updatedAt: now,
+              })
+            }),
+          )
+        } else {
+          setProducts((prev) =>
+            prev.map((product) => {
+              const orderedQty = quantityByProductId[product.id] || 0
+              if (!orderedQty) return product
+
+              return {
+                ...product,
+                stock: Math.max(0, Number(product.stock || 0) - orderedQty),
+                updatedAt: now,
+              }
+            }),
+          )
+        }
+      }
+
+      setNotice(
+        `Order ${orderId} marked as ${status}.${shouldDeductStock ? ' Stock updated.' : ''}`,
+      )
       return { ok: true }
     } catch (error) {
       return { ok: false, message: error.message || 'Failed to update order.' }

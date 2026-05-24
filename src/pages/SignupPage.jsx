@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import AuthCard from '../components/AuthCard'
 import {
@@ -31,6 +31,12 @@ function SignupPage({ onSignupSuccess }) {
   const [verifiedPhone, setVerifiedPhone] = useState('')
   const [isOtpLoading, setIsOtpLoading] = useState(false)
   const [isCreatingAccount, setIsCreatingAccount] = useState(false)
+
+  useEffect(() => {
+    if (!error) return undefined
+    const timer = setTimeout(() => setError(''), 3000)
+    return () => clearTimeout(timer)
+  }, [error])
 
   const handleFormChange = (key, value) => {
     if (key === 'phone') {
@@ -151,8 +157,8 @@ function SignupPage({ onSignupSuccess }) {
 
             const confirmedPhone = normalizePhone(
               extractPhone(verifyData) ||
-                extractPhone(widgetData) ||
-                validation.phone,
+              extractPhone(widgetData) ||
+              validation.phone,
             )
 
             if (!confirmedPhone) {
@@ -327,22 +333,24 @@ function SignupPage({ onSignupSuccess }) {
           }
         />
 
-        <button
-          type="button"
-          className="auth-btn auth-btn-secondary"
-          onClick={startOtpVerification}
-          disabled={isOtpLoading || isCreatingAccount}
-        >
-          {isOtpLoading ? 'Verifying OTP...' : 'Verify OTP'}
-        </button>
-
         {otpStatus && <p className="auth-success">{otpStatus}</p>}
-        {error && <p className="auth-error">{error}</p>}
+        {error && <div className="toast toast--error">{error}</div>}
         {success && <p className="auth-success">{success}</p>}
 
-        <button type="submit" className="auth-btn" disabled={isCreatingAccount || isOtpLoading}>
-          {isCreatingAccount ? 'Creating Account...' : 'Create Account'}
-        </button>
+        <div className="auth-signup-two-btn">
+          <button
+            type="button"
+            className="auth-btn auth-btn-secondary"
+            onClick={startOtpVerification}
+            disabled={isOtpLoading || isCreatingAccount}
+          >
+            {isOtpLoading ? 'Verifying OTP...' : 'Verify OTP'}
+          </button>
+
+          <button type="submit" className="auth-btn" disabled={isCreatingAccount || isOtpLoading}>
+            {isCreatingAccount ? 'Creating Account...' : 'Create Account'}
+          </button>
+        </div>
       </form>
     </AuthCard>
   )
