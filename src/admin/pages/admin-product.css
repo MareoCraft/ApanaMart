@@ -1,0 +1,766 @@
+/* =========================================================
+   ADMIN PRODUCT MANAGEMENT
+   ========================================================= */
+
+.admin-products-layout {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ---------- Product panel ---------- */
+
+.admin-products-layout > .admin-panel-card {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(31, 87, 56, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(24, 74, 43, 0.08);
+  padding: 16px;
+}
+
+.admin-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.admin-panel-head-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-panel-head h3 {
+  margin: 0;
+  color: #102018;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.admin-panel-head span {
+  color: #587064;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* ---------- Search / filters ---------- */
+
+.admin-products-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.admin-product-search,
+.admin-product-category-filter {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  border: 1px solid #c8d8cd;
+  border-radius: 11px;
+  padding: 0 13px;
+  background: #fff;
+  color: #253d30;
+  font-size: 0.9rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.admin-product-search::placeholder {
+  color: #8a9b91;
+}
+
+.admin-product-search:focus,
+.admin-product-category-filter:focus {
+  outline: none;
+  border-color: var(--admin-brand);
+  box-shadow: 0 0 0 4px rgba(32, 143, 68, 0.12);
+  background: #fff;
+}
+
+
+/* ---------- Add product floating button ---------- */
+
+.admin-product-add {
+  position: fixed;
+  right: 24px;
+  bottom: 28px;
+
+  width: 54px;
+  height: 54px;
+
+  border: 0;
+  border-radius: 50%;
+
+  display: grid;
+  place-items: center;
+
+  background: linear-gradient(135deg, #22914a, #156436);
+  box-shadow:
+    0 8px 20px rgba(21, 100, 54, 0.28),
+    0 2px 5px rgba(0, 0, 0, 0.12);
+
+  cursor: pointer;
+  z-index: 90;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.admin-product-add img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.admin-product-add:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+  box-shadow:
+    0 12px 25px rgba(21, 100, 54, 0.3),
+    0 3px 7px rgba(0, 0, 0, 0.12);
+}
+
+.admin-product-add:active {
+  transform: scale(0.94);
+}
+
+
+/* ---------- Product list ---------- */
+
+.admin-product-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+
+  max-height: 76vh;
+  overflow-y: auto;
+
+  padding: 3px;
+}
+
+
+/* ---------- Product card ---------- */
+
+.admin-product-card {
+  position: relative;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  padding: 14px;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #f6faf7
+  );
+
+  border: 1px solid rgba(31, 87, 56, 0.13);
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 16px rgba(20, 65, 38, 0.07);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.admin-product-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(31, 142, 68, 0.3);
+
+  box-shadow:
+    0 10px 24px rgba(20, 65, 38, 0.12);
+}
+
+
+/* ---------- Product image ---------- */
+
+.admin-product-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 130px;
+
+  margin-bottom: 10px;
+
+  border-radius: 12px;
+  background: #f4f8f5;
+  overflow: hidden;
+}
+
+.admin-product-img {
+  width: 100%;
+  height: 130px;
+
+  object-fit: contain;
+
+  border-radius: 12px;
+}
+
+.admin-emoji-box {
+  width: 100%;
+  height: 130px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 3rem;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #ffffff,
+      #eef6f0
+    );
+}
+
+
+/* ---------- Product information ---------- */
+
+.admin-product-info {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-product-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-product-top strong {
+  min-width: 0;
+
+  color: #111827;
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-product-info h4 {
+  margin: 0;
+
+  color: #15703a;
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.admin-product-info p {
+  margin: 6px 0 10px;
+
+  color: #6b7d73;
+  font-size: 0.78rem;
+}
+
+
+/* ---------- Stock badge ---------- */
+
+.stock-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  padding: 5px 9px;
+
+  border-radius: 0 13px 0 10px;
+
+  background: #e8fff0;
+  color: #0f9f57;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* ---------- Edit / Delete buttons ---------- */
+
+.admin-actions-inline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  margin-top: auto;
+}
+
+.admin-actions-inline button {
+  height: 36px;
+
+  border-radius: 9px;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-actions-inline button:active {
+  transform: scale(0.96);
+}
+
+.edit-btn {
+  border: 1px solid #cbdcfb !important;
+  background: #eef4ff !important;
+  color: #2563eb !important;
+}
+
+.delete-btn {
+  border: 1px solid #ffd0d6 !important;
+  background: #fff1f2 !important;
+  color: #e11d48 !important;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+  filter: brightness(0.98);
+}
+
+
+/* =========================================================
+   PRODUCT ADD / EDIT MODAL
+   ========================================================= */
+
+.admin-panel-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 30, 22, 0.48);
+  backdrop-filter: blur(6px);
+
+  animation: adminFadeIn 0.2s ease;
+}
+
+.admin-panel-card {
+  max-height: min(760px, 92vh);
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border: 1px solid rgba(31, 87, 56, 0.15);
+  border-radius: 18px;
+
+  padding: 22px;
+
+  box-shadow:
+    0 25px 70px rgba(15, 45, 27, 0.22);
+
+  animation: adminModalIn 0.25s ease;
+}
+
+.admin-panel-handle {
+  display: none;
+}
+
+.admin-close-btn {
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid #d8e3dc;
+  border-radius: 50%;
+
+  background: #f5f8f6;
+  color: #385344;
+
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-close-btn:hover {
+  background: #eaf3ed;
+  transform: rotate(4deg);
+}
+
+
+/* ---------- Product form ---------- */
+
+.admin-product-form {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-product-form input {
+  width: 100%;
+  min-height: 44px;
+
+  border: 1px solid #c8d8cd;
+  border-radius: 11px;
+
+  padding: 0 13px;
+
+  background: #fff;
+  color: #17251d;
+
+  font-size: 0.9rem;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.admin-product-form input::placeholder {
+  color: #8a9b91;
+}
+
+.admin-product-form input:focus {
+  outline: none;
+
+  border-color: var(--admin-brand);
+
+  background: #fff;
+
+  box-shadow:
+    0 0 0 4px rgba(32, 143, 68, 0.12);
+}
+
+
+/* ---------- Two-column form rows ---------- */
+
+.admin-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+
+/* ---------- Image upload ---------- */
+
+.admin-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  min-height: 76px;
+
+  border: 2px dashed #cbdacf;
+  border-radius: 13px;
+
+  background: #f8fbf9;
+
+  color: #335a44;
+
+  font-size: 0.84rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.admin-upload-label:hover {
+  border-color: #5aaa76;
+  background: #f0f8f3;
+}
+
+.admin-upload-label input {
+  width: auto;
+  min-height: auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.admin-upload-label span {
+  color: #7b8e84;
+  font-size: 0.74rem;
+}
+
+
+/* ---------- Modal submit button ---------- */
+
+.admin-product-form .admin-add-btn {
+  width: 100%;
+  height: 46px;
+
+  position: static;
+
+  border: none;
+  border-radius: 11px;
+
+  background: linear-gradient(
+    130deg,
+    #22914a,
+    #186536
+  );
+
+  color: #fff;
+
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 18px rgba(31, 142, 68, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+.admin-product-form .admin-add-btn:hover {
+  filter: brightness(1.04);
+}
+
+.admin-product-form .admin-add-btn:active {
+  transform: scale(0.98);
+}
+
+
+/* ---------- Form messages ---------- */
+
+.admin-form-note {
+  margin: 12px 0 0;
+
+  padding: 9px 11px;
+
+  border-radius: 9px;
+
+  background: #edf8f1;
+  color: #25613d;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* ---------- Empty state ---------- */
+
+.admin-empty {
+  grid-column: 1 / -1;
+
+  margin: 0;
+
+  padding: 35px 20px;
+
+  border: 1px dashed #cde0d0;
+  border-radius: 12px;
+
+  background: #f8fbf9;
+
+  color: #6c8173;
+
+  text-align: center;
+  font-size: 0.88rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .admin-product-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 850px) {
+  .admin-product-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-products-filters {
+    grid-template-columns: 1fr 160px;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-products-layout > .admin-panel-card {
+    padding: 12px;
+    border-radius: 13px;
+  }
+
+  .admin-products-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-product-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    max-height: 75vh;
+  }
+
+  .admin-product-card {
+    padding: 10px;
+    border-radius: 11px;
+  }
+
+  .admin-product-left,
+  .admin-product-img,
+  .admin-emoji-box {
+    height: 100px;
+    min-height: 100px;
+  }
+
+  .admin-product-top strong {
+    font-size: 0.78rem;
+  }
+
+  .admin-product-info h4 {
+    font-size: 0.78rem;
+  }
+
+  .admin-product-info p {
+    font-size: 0.7rem;
+  }
+
+  .admin-actions-inline button {
+    height: 32px;
+    font-size: 0.7rem;
+  }
+
+  .admin-product-add {
+    width: 50px;
+    height: 50px;
+    right: 16px;
+    bottom: 20px;
+  }
+
+  /* Mobile = bottom sheet */
+  .admin-panel-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .admin-panel-card {
+    width: 100%;
+    max-height: 92vh;
+
+    border-radius: 18px 18px 0 0;
+
+    padding: 16px;
+
+    animation: adminSlideUp 0.25s ease;
+  }
+
+  .admin-panel-handle {
+    display: block;
+
+    width: 48px;
+    height: 5px;
+
+    margin: 0 auto 16px;
+
+    border-radius: 999px;
+
+    background: #d1d8d3;
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-product-list {
+    gap: 6px;
+  }
+
+  .admin-product-card {
+    padding: 8px;
+  }
+
+  .admin-product-left,
+  .admin-product-img,
+  .admin-emoji-box {
+    height: 88px;
+    min-height: 88px;
+  }
+
+  .admin-product-add {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes adminFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes adminModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes adminSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

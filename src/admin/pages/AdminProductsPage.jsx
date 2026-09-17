@@ -3,6 +3,8 @@ import { useStore } from '../../context/StoreContext'
 import { formatPrice } from '../../utils/shopHelpers'
 import add from '../../../public/add.png'
 
+import './admin-product.css'
+
 const BLANK_PRODUCT = {
   id: '',
   name: '',
