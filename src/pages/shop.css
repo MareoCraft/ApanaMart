@@ -1,0 +1,252 @@
+/* =========================================
+   BESTSELLERS SECTION
+========================================= */
+
+.bestsellers-section {
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 35px;
+}
+
+/* Heading */
+
+.bestsellers-title {
+  margin-bottom: 18px;
+}
+
+.bestsellers-title h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #292929;
+  letter-spacing: -0.5px;
+}
+
+
+/* =========================================
+   CATEGORY GRID
+========================================= */
+
+.bestsellers-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 28px;
+}
+
+
+/* =========================================
+   CATEGORY CARD
+========================================= */
+
+.bestseller-category {
+  position: relative;
+  background: white;
+  border-radius: 10px;
+  min-width: 0;
+  overflow: visible;
+  transition: transform 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+.bestseller-category:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================
+   2 x 2 IMAGE GRID
+========================================= */
+
+.bestseller-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  padding: 10px;
+}
+
+
+/* Individual image */
+
+.bestseller-image-box {
+  height: fit-content;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bestseller-image-box img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.bestseller-category:hover
+.bestseller-image-box img {
+  transform: scale(1.04);
+}
+
+
+/* Emoji fallback */
+
+.bestseller-emoji {
+  font-size: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+
+/* =========================================
+   + MORE BADGE
+========================================= */
+
+.bestseller-more {
+  position: absolute;
+
+  left: 50%;
+  transform: translateX(-50%);
+
+  bottom: 45px;
+
+  background: #f7f8fa;
+  border: 1px solid #d9dce2;
+
+  padding: 5px 12px;
+
+  border-radius: 20px;
+
+  color: #646a73;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================
+   CATEGORY NAME
+========================================= */
+
+.bestseller-category-name {
+  padding: 5px 0;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 0 0 10px 10px;
+}
+
+.bestseller-category-name h3 {
+  margin: 0;
+
+  color: #33363b;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+  .bestsellers-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .bestseller-category-name h3 {
+    font-size: 12px;
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 650px) {
+
+  .bestsellers-section {
+    margin-top: 25px;
+  }
+
+  .bestsellers-title {
+    margin-bottom: 14px;
+  }
+
+  .bestsellers-title h2 {
+    font-size: 1.1rem;
+  }
+
+  .bestsellers-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .bestseller-category {
+    border-radius: 10px;
+  }
+
+  .bestseller-images {
+    gap: 6px;
+  }
+
+  .bestseller-emoji {
+    font-size: 40px;
+  }
+
+  .bestseller-category-name h3 {
+    font-size: 12px;
+  }
+
+  .bestseller-more {
+    bottom: 38px;
+
+    font-size: 12px;
+
+    padding: 4px 9px;
+  }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 380px) {
+
+  .bestsellers-grid {
+    gap: 5px;
+  }
+
+  .bestseller-image-box {
+    height: 50px;
+    border-radius: 10px;
+  }
+
+  .bestseller-category-name h3 {
+    font-size: 10px;
+  }
+
+  .bestseller-more {
+    font-size: 11px;
+    padding: 3px 7px;
+  }
+
+}

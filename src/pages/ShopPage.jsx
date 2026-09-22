@@ -3,6 +3,8 @@ import { formatPrice } from '../utils/shopHelpers'
 import { useNavigate } from 'react-router-dom'
 import poster from "/FreeDelivary.jpeg"
 
+import './shop.css'
+
 function ProductGridSkeleton() {
   return (
     <div className="product-grid skeleton-grid" aria-hidden="true">
@@ -71,6 +73,95 @@ function ShopPage() {
         <h2>Free delivery above {formatPrice(SHOP_INFO.freeDeliveryAbove)}</h2>
         <span>Single shop dispatch. Packed fresh every hour.</span> */}
       </article>
+
+      {/* ================= BESTSELLERS ================= */}
+      <section className="bestsellers-section">
+
+        <div className="bestsellers-title">
+          <h2>Bestsellers</h2>
+        </div>
+
+        <div className="bestsellers-grid">
+
+          {categories
+            .filter((category) => category !== 'All')
+            .slice(0, 6)
+            .map((category) => {
+
+              const categoryProducts = filteredProducts.filter(
+                (product) => product.category === category
+              )
+
+              if (categoryProducts.length === 0) return null
+
+              // Show only first 4 products in the preview
+              const previewProducts = categoryProducts.slice(0, 4)
+
+              // Remaining product count
+              const remainingCount = Math.max(
+                categoryProducts.length - 4,
+                0
+              )
+
+              return (
+                <article
+                  className="bestseller-category"
+                  key={category}
+                >
+
+                  {/* Product Images */}
+                  <div className="bestseller-images">
+
+                    {previewProducts.map((product) => {
+
+                      const hasImage =
+                        product.image?.startsWith('data:image') ||
+                        product.image?.startsWith('http://') ||
+                        product.image?.startsWith('https://')
+
+                      return (
+                        <div
+                          className="bestseller-image-box"
+                          key={product.id}
+                        >
+
+                          {hasImage ? (
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="bestseller-emoji">
+                              {product.image}
+                            </div>
+                          )}
+
+                        </div>
+                      )
+                    })}
+
+                  </div>
+
+                  {/* Remaining Products */}
+                  {remainingCount > 0 && (
+                    <div className="bestseller-more">
+                      +{remainingCount} more
+                    </div>
+                  )}
+
+                  {/* Category Name */}
+                  <div className="bestseller-category-name">
+                    <h3>{category}</h3>
+                  </div>
+
+                </article>
+              )
+            })}
+
+        </div>
+
+      </section>
 
       {shouldShowSkeleton ? (
         <ProductGridSkeleton />
@@ -180,7 +271,7 @@ function ShopPage() {
                           <div className="card-body">
 
                             <div className="badge-body">
-                              <p className="badge">{product.badge}</p> 
+                              <p className="badge">{product.badge}</p>
                               <span className={`stock-meta ${isOutOfStock ? 'stock-meta--out' : ''}`}>
                                 {isOutOfStock ? 'Out of stock' : `${product.stock} in stock`}
                               </span>
