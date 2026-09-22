@@ -2,29 +2,6 @@ from pathlib import Path
 import shutil
 import zipfile
 
-# Regenerate the README to match the user's actual GitHub structure:
-# README.md at root + Images/ at root, with no docs/ folder.
-root = Path("/mnt/data/apnamart-readme-root-images")
-images = root / "Images"
-images.mkdir(parents=True, exist_ok=True)
-
-source_images = {
-    "homePage.png": "/mnt/data/homePage.png",
-    "categoryPage.png": "/mnt/data/categoryPage.png",
-    "cardPage.png": "/mnt/data/cardPage.png",
-    "checkOutPage.png": "/mnt/data/checkOutPage.png",
-    "ordersPage.png": "/mnt/data/ordersPage.png",
-    "profilePage.png": "/mnt/data/profilePage.png",
-    "loginPage.png": "/mnt/data/loginPage.png",
-    "accountCreate.png": "/mnt/data/accountCreate.png",
-    "adminLogin.png": "/mnt/data/adminLogin.png",
-}
-
-for filename, source in source_images.items():
-    shutil.copy2(source, images / filename)
-
-readme = r'''# 🛒 ApnaMart
-
 > **Your Everyday Online Store**  
 > A modern React-based e-commerce application designed to bring everyday local-store shopping online through a simple, responsive, and convenient digital experience.
 
